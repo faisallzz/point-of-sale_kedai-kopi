@@ -10,12 +10,14 @@ return new class extends Migration
      * Run the migrations.
      */
     public function up(): void
-    {
-        Schema::create('menus', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
-        });
-    }
+{
+    Schema::create('menus', function (Blueprint $table) {
+        $table->id(); // PK otomatis [USULAN: representasi idMenu di Class Diagram]
+        $table->string('nama_menu', 100); // [USULAN: representasi namaMenu: string]
+        $table->decimal('harga_jual', 10, 2); // [USULAN: representasi hargaJual: double]
+        $table->timestamps(); // Default Laravel [USULAN]
+    });
+}
 
     /**
      * Reverse the migrations.
