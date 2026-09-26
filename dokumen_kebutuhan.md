@@ -6,7 +6,7 @@
 | 1 | Ahmad Faizal Bahri | 2495114009 | Project Manager, Reviewer / QA |
 | 2 | Muhammad Lutfi Maulana | 2495114039 | Requirement Analyst, Reviewer / QA |
 ---
-## 1. Daftar Aktor & Peran
+## 1. Daftar Aktor & Peran 
 1. **Pemilik:** Melihat laporan pendapatan, melihat kondisi stok.
 2. **Admin:** Mengelola data menu, mengelola harga, mengelola bahan baku, melakukan penyesuaian stok.
 3. **Kasir:** Mencatat transaksi, memilih menu yang dipesan, memasukkan jumlah pesanan.
