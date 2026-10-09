@@ -45,6 +45,24 @@ class User extends Authenticatable
     }
 
     /**
+     * Helper pemeriksaan role pengguna.
+     */
+    public function isAdmin(): bool
+    {
+        return $this->peran === 'admin';
+    }
+
+    public function isKasir(): bool
+    {
+        return $this->peran === 'kasir';
+    }
+
+    public function isPemilik(): bool
+    {
+        return $this->peran === 'pemilik';
+    }
+
+    /**
      * Relasi One-to-Many: 1 pengguna/kasir dapat mencatat banyak transaksi penjualan.
      */
     public function transaksiPenjualans(): HasMany
