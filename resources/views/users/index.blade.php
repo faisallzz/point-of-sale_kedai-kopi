@@ -81,16 +81,16 @@
                                     </a>
 
                                     <form
+                                        id="delete-form-{{ $user->id }}"
                                         method="POST"
                                         action="{{ route('admin.users.destroy', $user) }}"
-                                        onsubmit="return confirm('Apakah Anda yakin ingin menghapus pengguna {{ $user->nama_pengguna }}? Data yang memiliki riwayat transaksi tidak dapat dihapus.');"
                                         class="inline"
                                     >
                                         @csrf
                                         @method('DELETE')
                                         <button
                                             type="submit"
-                                            class="px-2.5 py-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-xs border border-rose-200 transition"
+                                            class="px-2.5 py-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-xs border border-rose-200 transition delete-btn"
                                         >
                                             🗑️ Hapus
                                         </button>
