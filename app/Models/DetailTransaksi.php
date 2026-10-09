@@ -20,7 +20,7 @@ class DetailTransaksi extends Model
     ];
 
     protected $casts = [
-        'jumlah'   => 'integer',
+        'jumlah' => 'integer',
         'subtotal' => 'decimal:2',
     ];
 

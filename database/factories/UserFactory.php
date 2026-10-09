@@ -4,7 +4,6 @@ namespace Database\Factories;
 
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 /**
@@ -28,7 +27,7 @@ class UserFactory extends Factory
             'nama_pengguna' => fake()->unique()->userName(),
             'password' => static::$password ??= bcrypt('password123'),
             'peran' => fake()->randomElement(['admin', 'kasir', 'pemilik']),
-            'remember_token' => \Illuminate\Support\Str::random(10),
+            'remember_token' => Str::random(10),
         ];
     }
 

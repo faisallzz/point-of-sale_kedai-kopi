@@ -2,14 +2,14 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
-use App\Models\User;
 use App\Models\BahanBaku;
-use App\Models\Menu;
+use App\Models\DetailTransaksi;
 use App\Models\KomposisiMenu;
 use App\Models\LaporanPenjualan;
+use App\Models\Menu;
 use App\Models\TransaksiPenjualan;
-use App\Models\DetailTransaksi;
+use App\Models\User;
+use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {

@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class UserSeeder extends Seeder
@@ -10,20 +10,20 @@ class UserSeeder extends Seeder
     /**
      * Run the database seeds.
      */
-        public function run(): void
+    public function run(): void
     {
         // Akun statis untuk login operasional kedai
-        \App\Models\User::create([
+        User::create([
             'nama_pengguna' => 'admin_kopi',
             'password' => bcrypt('admin123'),
             'peran' => 'admin',
         ]);
-        \App\Models\User::create([
+        User::create([
             'nama_pengguna' => 'kasir_lutfi',
             'password' => bcrypt('kasir123'),
-         'peran' => 'kasir',
+            'peran' => 'kasir',
         ]);
-        \App\Models\User::create([
+        User::create([
             'nama_pengguna' => 'owner_kedai',
             'password' => bcrypt('owner123'),
             'peran' => 'pemilik',

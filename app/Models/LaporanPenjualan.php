@@ -19,9 +19,9 @@ class LaporanPenjualan extends Model
     ];
 
     protected $casts = [
-        'bulan'            => 'integer',
+        'bulan' => 'integer',
         'total_pendapatan' => 'decimal:2',
-        'total_transaksi'  => 'integer',
+        'total_transaksi' => 'integer',
     ];
 
     /**

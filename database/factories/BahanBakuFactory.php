@@ -19,8 +19,8 @@ class BahanBakuFactory extends Factory
     {
         return [
             'nama_bahan_baku' => fake()->randomElement([
-                'Biji Kopi Arabika', 'Biji Kopi Robusta', 'Susu Segar UHT', 
-                'Sirup Vanila', 'Sirup Karamel', 'Bubuk Cokelat', 'Gula Aren'
+                'Biji Kopi Arabika', 'Biji Kopi Robusta', 'Susu Segar UHT',
+                'Sirup Vanila', 'Sirup Karamel', 'Bubuk Cokelat', 'Gula Aren',
             ]),
             'stok' => fake()->randomFloat(2, 10, 100),
             'satuan' => fake()->randomElement(['gram', 'ml', 'pcs']),

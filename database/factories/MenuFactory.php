@@ -19,9 +19,9 @@ class MenuFactory extends Factory
     {
         return [
             'nama_menu' => fake()->randomElement([
-                'Espresso Single', 'Americano', 'Caffe Latte', 
-                'Cappuccino', 'Caramel Macchiato', 'Mocha Coffee', 
-                'Cold Brew', 'Matcha Latte', 'V60 Arabica'
+                'Espresso Single', 'Americano', 'Caffe Latte',
+                'Cappuccino', 'Caramel Macchiato', 'Mocha Coffee',
+                'Cold Brew', 'Matcha Latte', 'V60 Arabica',
             ]),
             'harga_jual' => fake()->randomFloat(2, 18000, 45000),
         ];
