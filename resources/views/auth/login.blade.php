@@ -22,7 +22,7 @@
                 ☕
             </div>
             <h1 class="text-2xl font-extrabold text-amber-100 tracking-tight">POS KEDAI KOPI</h1>
-            <p class="text-xs text-amber-300 font-medium tracking-wide uppercase mt-1">Sistem Layanan Kasir & Manajemen Multi-Role</p>
+            <p class="text-xs text-amber-300 font-medium tracking-wide uppercase mt-1">Sistem Kasir</p>
         </div>
 
         <!-- Form Card -->
@@ -100,52 +100,10 @@
                     type="submit"
                     class="w-full py-3 px-4 rounded-xl font-bold text-sm bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 text-white shadow-lg shadow-amber-900/50 transition transform active:scale-[0.99]"
                 >
-                    Masuk ke Sistem POS
+                    Masuk
                 </button>
             </form>
-
-            <!-- Quick Demo Accounts Pills -->
-            <div class="mt-8 pt-6 border-t border-stone-800">
-                <p class="text-[11px] font-semibold text-stone-400 uppercase tracking-wider mb-2 text-center">Akun Demo (Klik untuk Isi Otomatis):</p>
-                <div class="grid grid-cols-3 gap-2 text-center">
-                    <button
-                        type="button"
-                        onclick="fillDemo('admin_kopi', 'admin123')"
-                        class="p-2 rounded-lg bg-indigo-950/60 hover:bg-indigo-900/80 border border-indigo-800 text-indigo-200 transition text-[11px] font-semibold"
-                    >
-                        <span class="block text-indigo-400 font-bold">Admin</span>
-                        admin_kopi
-                    </button>
-                    <button
-                        type="button"
-                        onclick="fillDemo('kasir_lutfi', 'kasir123')"
-                        class="p-2 rounded-lg bg-emerald-950/60 hover:bg-emerald-900/80 border border-emerald-800 text-emerald-200 transition text-[11px] font-semibold"
-                    >
-                        <span class="block text-emerald-400 font-bold">Kasir</span>
-                        kasir_lutfi
-                    </button>
-                    <button
-                        type="button"
-                        onclick="fillDemo('owner_kedai', 'owner123')"
-                        class="p-2 rounded-lg bg-amber-950/60 hover:bg-amber-900/80 border border-amber-800 text-amber-200 transition text-[11px] font-semibold"
-                    >
-                        <span class="block text-amber-400 font-bold">Pemilik</span>
-                        owner_kedai
-                    </button>
-                </div>
-            </div>
         </div>
-
-        <p class="text-center text-xs text-stone-500 mt-6">
-            LKP Pertemuan 5 &middot; Pemrograman Web Lanjut Kelompok 8
-        </p>
     </div>
-
-    <script>
-        function fillDemo(username, password) {
-            document.getElementById('nama_pengguna').value = username;
-            document.getElementById('password').value = password;
-        }
-    </script>
 </body>
 </html>

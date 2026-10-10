@@ -27,7 +27,6 @@
                         </div>
                         <div>
                             <span class="text-lg font-extrabold tracking-tight text-amber-100 group-hover:text-white transition">POS Kedai Kopi</span>
-                            <span class="block text-[11px] font-medium text-amber-300 tracking-wider uppercase">Sistem Multi-Role & Layanan</span>
                         </div>
                     </a>
                 </div>
@@ -162,7 +161,7 @@
 
     <!-- Footer -->
     <footer class="mt-auto bg-stone-100 border-t border-stone-200 py-6 text-center text-xs text-stone-500">
-        <p>&copy; {{ date('Y') }} POS Kedai Kopi — Pemrograman Web Lanjut Kelompok 8 (LKP 5 Multi-Role & User Management)</p>
+        <p>&copy; {{ date('Y') }} POS Kedai Kopi</p>
     </footer>
 </body>
 </html>

@@ -371,7 +371,7 @@ Menghapus akun pengguna dari sistem dengan aturan integritas data:
 | `database/migrations/0001_01_01_000000_create_users_table.php` | Skema tabel `users` dengan kolom `nama_pengguna` dan enum `peran`. |
 | `database/seeders/UserSeeder.php` | Data seeder untuk 3 akun pengguna utama (`admin_kopi`, `kasir_lutfi`, `owner_kedai`). |
 | `resources/views/layouts/app.blade.php` | Master layout aplikasi dengan bilah navigasi dinamis berbasis role aktif dan penampil flash alert. |
-| `resources/views/auth/login.blade.php` | Tampilan antarmuka formulir login responsif bertema POS kedai kopi beserta tombol cepat akun demo. |
+| `resources/views/auth/login.blade.php` | Tampilan antarmuka formulir login responsif bertema POS kedai kopi. |
 | `resources/views/dashboard/` | Tampilan dasbor spesifik: `admin.blade.php`, `kasir.blade.php`, dan `pemilik.blade.php`. |
 | `resources/views/users/` | Tampilan antarmuka manajemen pengguna: `index.blade.php`, `create.blade.php`, dan `edit.blade.php`. |
 | `resources/views/errors/403.blade.php` | Halaman tampilan kustom ketika hak akses pengguna ditolak (Error 403 Forbidden). |
