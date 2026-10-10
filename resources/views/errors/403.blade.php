@@ -49,7 +49,7 @@
         </div>
 
         <p class="text-xs text-stone-500 mt-6">
-            Keamanan Sistem Multi-Role POS Kedai Kopi &middot; LKP 5
+            Keamanan Sistem POS Kedai Kopi
         </p>
     </div>
 </body>
