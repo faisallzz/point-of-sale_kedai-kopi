@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#292524" />
+      <stop offset="100%" stop-color="#1c1917" />
+    </linearGradient>
+    <linearGradient id="cupGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f5f5f4" />
+      <stop offset="100%" stop-color="#d6d3d1" />
+    </linearGradient>
+    <linearGradient id="coffeeGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#78350f" />
+      <stop offset="100%" stop-color="#451a03" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="400" height="300" fill="url(#bg)" />
+
+  <!-- Subtle Circular Glow -->
+  <circle cx="200" cy="155" r="90" fill="#78350f" opacity="0.18" />
+
+  <!-- Saucer -->
+  <ellipse cx="200" cy="210" rx="85" ry="18" fill="#e7e5e4" opacity="0.9" />
+  <ellipse cx="200" cy="208" rx="80" ry="15" fill="#f5f5f4" />
+  <ellipse cx="200" cy="208" rx="55" ry="9" fill="#d6d3d1" />
+
+  <!-- Cup Shadow -->
+  <ellipse cx="200" cy="195" rx="42" ry="7" fill="#292524" opacity="0.35" />
+
+  <!-- Cup Handle -->
+  <path d="M 235 130 C 265 130 265 175 235 175" fill="none" stroke="url(#cupGrad)" stroke-width="10" stroke-linecap="round" />
+
+  <!-- Cup Body -->
+  <path d="M 160 120 L 240 120 C 238 180, 222 195, 200 195 C 178 195, 162 180, 160 120 Z" fill="url(#cupGrad)" />
+
+  <!-- Coffee Surface Inside Cup -->
+  <ellipse cx="200" cy="122" rx="38" ry="12" fill="url(#cupGrad)" />
+  <ellipse cx="200" cy="123" rx="34" ry="10" fill="url(#coffeeGrad)" />
+  <ellipse cx="200" cy="123" rx="26" ry="6" fill="#92400e" opacity="0.4" />
+
+  <!-- Latte Art Accent in Cup -->
+  <path d="M 197 121 C 200 119 203 121 200 124 C 197 121 199 119 200 121" fill="#fef3c7" opacity="0.75" />
+
+  <!-- Steam Lines -->
+  <path d="M 190 102 C 185 92 195 82 190 72" fill="none" stroke="#d6d3d1" stroke-width="3" stroke-linecap="round" opacity="0.35" />
+  <path d="M 202 98 C 208 88 198 78 204 68" fill="none" stroke="#d6d3d1" stroke-width="3.5" stroke-linecap="round" opacity="0.45" />
+  <path d="M 213 104 C 218 94 210 84 215 75" fill="none" stroke="#d6d3d1" stroke-width="2.5" stroke-linecap="round" opacity="0.3" />
+
+  <!-- Placeholder label (clean & minimal) -->
+  <text x="200" y="255" text-anchor="middle" font-family="system-ui, sans-serif" font-size="12" font-weight="600" fill="#a8a29e" letter-spacing="1.5">KEDAI KOPI</text>
+</svg>
