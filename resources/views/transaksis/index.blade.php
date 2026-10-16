@@ -27,6 +27,7 @@
                         <th class="px-5 py-3.5">No</th>
                         <th class="px-5 py-3.5">No. Transaksi</th>
                         <th class="px-5 py-3.5">Kasir Petugas</th>
+                        <th class="px-5 py-3.5">Pelanggan</th>
                         <th class="px-5 py-3.5">Tanggal</th>
                         <th class="px-5 py-3.5">Rincian Item</th>
                         <th class="px-5 py-3.5">Total Bayar</th>
@@ -43,6 +44,9 @@
                             </td>
                             <td class="px-5 py-4 font-semibold text-stone-700">
                                 ☕ {{ $trx->user->nama_pengguna ?? 'Kasir #' . $trx->user_id }}
+                            </td>
+                            <td class="px-5 py-4 font-medium text-stone-700">
+                                {{ $trx->nama_pelanggan ?: '-' }}
                             </td>
                             <td class="px-5 py-4 text-stone-500">
                                 {{ $trx->tanggal_transaksi ? \Carbon\Carbon::parse($trx->tanggal_transaksi)->format('d M Y, H:i') : '-' }}
@@ -62,7 +66,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="px-5 py-8 text-center text-stone-400">Belum ada transaksi tercatat.</td>
+                            <td colspan="7" class="px-5 py-8 text-center text-stone-400">Belum ada transaksi tercatat.</td>
                         </tr>
                     @endforelse
                 </tbody>

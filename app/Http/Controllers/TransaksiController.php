@@ -6,6 +6,7 @@ use App\Models\Menu;
 use App\Models\TransaksiPenjualan;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 class TransaksiController extends Controller
@@ -27,7 +28,7 @@ class TransaksiController extends Controller
      */
     public function create(): View
     {
-        $menus = Menu::all();
+        $menus = Menu::orderBy('id')->get();
 
         return view('transaksis.create', compact('menus'));
     }
@@ -38,26 +39,78 @@ class TransaksiController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'menu_id' => ['required', 'exists:menus,id'],
-            'jumlah' => ['required', 'integer', 'min:1'],
+            'nama_pelanggan' => ['nullable', 'string', 'max:100'],
+            'items' => ['required', 'array', 'min:1'],
+            'items.*.menu_id' => ['required', 'integer', 'exists:menus,id'],
+            'items.*.jumlah' => ['required', 'integer', 'min:1', 'max:99'],
+        ], [
+            'nama_pelanggan.max' => 'Nama pelanggan tidak boleh lebih dari 100 karakter.',
+            'items.required' => 'Pesanan masih kosong. Pilih minimal satu menu.',
+            'items.array' => 'Format daftar pesanan tidak valid.',
+            'items.min' => 'Pesanan masih kosong. Pilih minimal satu menu.',
+            'items.*.menu_id.required' => 'Menu pesanan wajib dipilih.',
+            'items.*.menu_id.integer' => 'ID menu harus berupa angka integer.',
+            'items.*.menu_id.exists' => 'Menu yang dipilih tidak ditemukan dalam daftar menu.',
+            'items.*.jumlah.required' => 'Jumlah pesanan wajib diisi.',
+            'items.*.jumlah.integer' => 'Jumlah pesanan harus berupa angka integer.',
+            'items.*.jumlah.min' => 'Jumlah pesanan minimal 1 porsi.',
+            'items.*.jumlah.max' => 'Jumlah pesanan maksimal 99 porsi per item.',
         ]);
 
-        $menu = Menu::findOrFail($validated['menu_id']);
-        $total = $menu->harga_jual * $validated['jumlah'];
+        // Gabungkan jumlah jika menu_id yang sama muncul lebih dari sekali
+        $mergedItems = [];
+        foreach ($validated['items'] as $item) {
+            $menuId = (int) $item['menu_id'];
+            $jumlah = (int) $item['jumlah'];
+            if (isset($mergedItems[$menuId])) {
+                $mergedItems[$menuId] += $jumlah;
+            } else {
+                $mergedItems[$menuId] = $jumlah;
+            }
+        }
 
-        $trx = TransaksiPenjualan::create([
-            'user_id' => auth()->id(),
-            'laporan_penjualan_id' => null,
-            'nomor_transaksi' => 'TRX-'.date('Ymd').'-'.sprintf('%03d', TransaksiPenjualan::count() + 1),
-            'tanggal_transaksi' => now(),
-            'total_bayar' => $total,
-        ]);
+        // Ambil harga dari database (server-side calculation)
+        $menus = Menu::whereIn('id', array_keys($mergedItems))->get()->keyBy('id');
 
-        $trx->detailTransaksis()->create([
-            'menu_id' => $menu->id,
-            'jumlah' => $validated['jumlah'],
-            'subtotal' => $total,
-        ]);
+        // Normalisasi nama pelanggan: kosong atau hanya spasi disimpan sebagai 'Pelanggan Umum'
+        $namaPelanggan = trim((string) $request->input('nama_pelanggan'));
+        if ($namaPelanggan === '') {
+            $namaPelanggan = 'Pelanggan Umum';
+        }
+
+        $trx = DB::transaction(function () use ($mergedItems, $menus, $namaPelanggan) {
+            $totalBayar = 0;
+            $details = [];
+
+            foreach ($mergedItems as $menuId => $jumlah) {
+                $menu = $menus->get($menuId);
+                $subtotal = $menu->harga_jual * $jumlah;
+                $totalBayar += $subtotal;
+
+                $details[] = [
+                    'menu_id' => $menuId,
+                    'jumlah' => $jumlah,
+                    'subtotal' => $subtotal,
+                ];
+            }
+
+            $nomorTransaksi = 'TRX-'.date('Ymd').'-'.sprintf('%03d', TransaksiPenjualan::count() + 1);
+
+            $trx = TransaksiPenjualan::create([
+                'user_id' => auth()->id(),
+                'laporan_penjualan_id' => null,
+                'nomor_transaksi' => $nomorTransaksi,
+                'nama_pelanggan' => $namaPelanggan,
+                'tanggal_transaksi' => now(),
+                'total_bayar' => $totalBayar,
+            ]);
+
+            foreach ($details as $detail) {
+                $trx->detailTransaksis()->create($detail);
+            }
+
+            return $trx;
+        });
 
         return redirect()->route('transaksi.index')->with('success', 'Transaksi '.$trx->nomor_transaksi.' berhasil dicatat.');
     }
