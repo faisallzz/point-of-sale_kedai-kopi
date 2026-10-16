@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\DetailTransaksi;
+use App\Models\LaporanPenjualan;
 use App\Models\Menu;
 use App\Models\TransaksiPenjualan;
 use App\Models\User;
@@ -331,5 +332,94 @@ class KasirTransaksiTest extends TestCase
         // 3. gambar file ada
         $menuAda = Menu::create(['nama_menu' => 'Espresso Ada', 'harga_jual' => 18000, 'gambar' => 'images/menu/espresso.jpg']);
         $this->assertStringContainsString('images/menu/espresso.jpg', $menuAda->gambar_url);
+    }
+
+    /**
+     * 10. Kasir dapat menghapus transaksi yang belum terikat laporan penjualan.
+     */
+    public function test_kasir_can_delete_unlinked_transaction(): void
+    {
+        $menu = Menu::create(['nama_menu' => 'Kopi Hapus', 'harga_jual' => 20000]);
+
+        $trx = TransaksiPenjualan::create([
+            'user_id' => $this->kasir->id,
+            'nomor_transaksi' => 'TRX-TEST-DELETE-01',
+            'nama_pelanggan' => 'Salah Input',
+            'tanggal_transaksi' => now(),
+            'total_bayar' => 20000,
+        ]);
+
+        DetailTransaksi::create([
+            'transaksi_penjualan_id' => $trx->id,
+            'menu_id' => $menu->id,
+            'jumlah' => 1,
+            'subtotal' => 20000,
+        ]);
+
+        $response = $this->actingAs($this->kasir)->delete(route('transaksi.destroy', $trx));
+
+        $response->assertRedirect(route('transaksi.index'));
+        $response->assertSessionHas('success');
+
+        $this->assertDatabaseMissing('transaksi_penjualans', ['id' => $trx->id]);
+        $this->assertDatabaseMissing('detail_transaksis', ['transaksi_penjualan_id' => $trx->id]);
+    }
+
+    /**
+     * 11. Kasir tidak dapat menghapus transaksi yang sudah masuk laporan bulanan.
+     */
+    public function test_kasir_cannot_delete_transaction_linked_to_laporan_penjualan(): void
+    {
+        $laporan = LaporanPenjualan::create([
+            'bulan' => 10,
+            'total_pendapatan' => 50000,
+            'total_transaksi' => 1,
+        ]);
+
+        $trx = TransaksiPenjualan::create([
+            'user_id' => $this->kasir->id,
+            'laporan_penjualan_id' => $laporan->id,
+            'nomor_transaksi' => 'TRX-TEST-LOCKED-01',
+            'nama_pelanggan' => 'Terkunci Laporan',
+            'tanggal_transaksi' => now(),
+            'total_bayar' => 50000,
+        ]);
+
+        $response = $this->actingAs($this->kasir)->delete(route('transaksi.destroy', $trx));
+
+        $response->assertRedirect(route('transaksi.index'));
+        $response->assertSessionHas('error');
+
+        $this->assertDatabaseHas('transaksi_penjualans', ['id' => $trx->id]);
+    }
+
+    /**
+     * 12. Pemilik ditolak (403) dan tamu diarahkan ke login saat mencoba menghapus transaksi.
+     */
+    public function test_pemilik_and_guest_cannot_delete_transaction(): void
+    {
+        $trx = TransaksiPenjualan::create([
+            'user_id' => $this->kasir->id,
+            'nomor_transaksi' => 'TRX-TEST-AUTH-01',
+            'nama_pelanggan' => 'Uji Auth',
+            'tanggal_transaksi' => now(),
+            'total_bayar' => 20000,
+        ]);
+
+        // Tamu
+        $guestResponse = $this->delete(route('transaksi.destroy', $trx));
+        $guestResponse->assertRedirect(route('login'));
+
+        // Pemilik
+        $pemilik = User::create([
+            'nama_pengguna' => 'pemilik_delete_uji',
+            'password' => bcrypt('password123'),
+            'peran' => 'pemilik',
+        ]);
+
+        $pemilikResponse = $this->actingAs($pemilik)->delete(route('transaksi.destroy', $trx));
+        $pemilikResponse->assertStatus(403);
+
+        $this->assertDatabaseHas('transaksi_penjualans', ['id' => $trx->id]);
     }
 }

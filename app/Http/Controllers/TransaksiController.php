@@ -114,4 +114,26 @@ class TransaksiController extends Controller
 
         return redirect()->route('transaksi.index')->with('success', 'Transaksi '.$trx->nomor_transaksi.' berhasil dicatat.');
     }
+
+    /**
+     * Hapus data transaksi penjualan (Kasir dan Admin).
+     */
+    public function destroy(TransaksiPenjualan $transaksi): RedirectResponse
+    {
+        // Cegah penghapusan jika transaksi sudah masuk rekap laporan bulanan
+        if ($transaksi->laporan_penjualan_id !== null) {
+            return redirect()->route('transaksi.index')
+                ->with('error', 'Transaksi '.$transaksi->nomor_transaksi.' tidak dapat dihapus karena sudah masuk dalam rekap laporan bulanan.');
+        }
+
+        $nomor = $transaksi->nomor_transaksi;
+
+        DB::transaction(function () use ($transaksi) {
+            $transaksi->detailTransaksis()->delete();
+            $transaksi->delete();
+        });
+
+        return redirect()->route('transaksi.index')
+            ->with('success', 'Transaksi '.$nomor.' berhasil dihapus.');
+    }
 }

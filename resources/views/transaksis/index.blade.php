@@ -31,6 +31,7 @@
                         <th class="px-5 py-3.5">Tanggal</th>
                         <th class="px-5 py-3.5">Rincian Item</th>
                         <th class="px-5 py-3.5">Total Bayar</th>
+                        <th class="px-5 py-3.5 text-center">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-stone-200 bg-white">
@@ -63,10 +64,35 @@
                             <td class="px-5 py-4 font-extrabold text-emerald-700 text-sm">
                                 Rp {{ number_format($trx->total_bayar, 0, ',', '.') }}
                             </td>
+                            <td class="px-5 py-4 text-center">
+                                @if($trx->laporan_penjualan_id === null)
+                                    <form
+                                        id="delete-form-{{ $trx->id }}"
+                                        method="POST"
+                                        action="{{ route('transaksi.destroy', $trx) }}"
+                                        onsubmit="return confirm('Apakah Anda yakin ingin menghapus transaksi {{ $trx->nomor_transaksi }}? Tindakan ini tidak dapat dibatalkan.');"
+                                        class="inline"
+                                    >
+                                        @csrf
+                                        @method('DELETE')
+                                        <button
+                                            type="submit"
+                                            class="px-2.5 py-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-xs border border-rose-200 transition inline-flex items-center gap-1 shadow-xs"
+                                            title="Hapus transaksi jika ada kesalahan input"
+                                        >
+                                            <span>🗑️</span> Hapus
+                                        </button>
+                                    </form>
+                                @else
+                                    <span class="inline-flex items-center gap-1 px-2 py-1 rounded text-[11px] font-semibold text-stone-400 bg-stone-100 border border-stone-200" title="Transaksi telah direkap dalam laporan penjualan dan tidak dapat dihapus">
+                                        <span>🔒</span> Terkunci
+                                    </span>
+                                @endif
+                            </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="px-5 py-8 text-center text-stone-400">Belum ada transaksi tercatat.</td>
+                            <td colspan="8" class="px-5 py-8 text-center text-stone-400">Belum ada transaksi tercatat.</td>
                         </tr>
                     @endforelse
                 </tbody>
