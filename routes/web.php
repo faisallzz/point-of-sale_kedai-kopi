@@ -41,14 +41,20 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::resource('users', UserController::class);
 });
 
-// Modul Master Bahan Baku (Khusus Admin)
+// Modul Master Bahan Baku & Menu (Khusus Admin)
 Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/bahan-baku', [BahanBakuController::class, 'index'])->name('bahan-baku.index');
     Route::get('/bahan-baku/create', [BahanBakuController::class, 'create'])->name('bahan-baku.create');
     Route::post('/bahan-baku', [BahanBakuController::class, 'store'])->name('bahan-baku.store');
+    Route::get('/bahan-baku/{bahan_baku}/edit', [BahanBakuController::class, 'edit'])->name('bahan-baku.edit');
+    Route::put('/bahan-baku/{bahan_baku}', [BahanBakuController::class, 'update'])->name('bahan-baku.update');
+    Route::delete('/bahan-baku/{bahan_baku}', [BahanBakuController::class, 'destroy'])->name('bahan-baku.destroy');
 
     Route::get('/menu/create', [MenuController::class, 'create'])->name('menus.create');
     Route::post('/menu', [MenuController::class, 'store'])->name('menus.store');
+    Route::get('/menu/{menu}/edit', [MenuController::class, 'edit'])->name('menus.edit');
+    Route::put('/menu/{menu}', [MenuController::class, 'update'])->name('menus.update');
+    Route::delete('/menu/{menu}', [MenuController::class, 'destroy'])->name('menus.destroy');
 });
 
 // Rute Role: KASIR

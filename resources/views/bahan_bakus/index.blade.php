@@ -29,6 +29,7 @@
                         <th class="px-5 py-3.5">Sisa Stok</th>
                         <th class="px-5 py-3.5">Satuan Ukuran</th>
                         <th class="px-5 py-3.5">Kondisi Stok</th>
+                        <th class="px-5 py-3.5 text-center">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-stone-200 bg-white">
@@ -51,10 +52,47 @@
                                     {{ $b->stok > 1000 ? 'Aman' : 'Perlu Ditambah' }}
                                 </span>
                             </td>
+                            <td class="px-5 py-4 text-center">
+                                <div class="inline-flex items-center gap-1.5">
+                                    <a
+                                        href="{{ route('bahan-baku.edit', $b) }}"
+                                        class="px-2.5 py-1.5 rounded-lg bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold text-xs border border-stone-300 transition"
+                                        title="Edit sisa stok atau data bahan baku"
+                                    >
+                                        ✏️ Edit Stok
+                                    </a>
+
+                                    @if(($b->komposisi_menus_count ?? 0) === 0)
+                                        <form
+                                            action="{{ route('bahan-baku.destroy', $b) }}"
+                                            method="POST"
+                                            onsubmit="return confirm('Apakah Anda yakin ingin menghapus bahan baku {{ $b->nama_bahan_baku }}? Tindakan ini tidak dapat dibatalkan.');"
+                                            class="inline"
+                                        >
+                                            @csrf
+                                            @method('DELETE')
+                                            <button
+                                                type="submit"
+                                                class="px-2.5 py-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-xs border border-rose-200 transition"
+                                                title="Hapus bahan baku yang tidak digunakan resep menu"
+                                            >
+                                                🗑️ Hapus
+                                            </button>
+                                        </form>
+                                    @else
+                                        <span
+                                            class="px-2 py-1 rounded text-[11px] font-semibold text-stone-400 bg-stone-100 border border-stone-200 cursor-not-allowed"
+                                            title="Bahan baku masih digunakan dalam komposisi resep menu"
+                                        >
+                                            🔒 Dipakai Resep
+                                        </span>
+                                    @endif
+                                </div>
+                            </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="px-5 py-8 text-center text-stone-400">Belum ada bahan baku tercatat.</td>
+                            <td colspan="6" class="px-5 py-8 text-center text-stone-400">Belum ada bahan baku tercatat.</td>
                         </tr>
                     @endforelse
                 </tbody>
