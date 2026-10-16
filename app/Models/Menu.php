@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -16,11 +17,28 @@ class Menu extends Model
     protected $fillable = [
         'nama_menu',
         'harga_jual',
+        'gambar',
     ];
 
     protected $casts = [
         'harga_jual' => 'decimal:2',
     ];
+
+    /**
+     * Accessor URL gambar menu dengan fallback ke placeholder.
+     */
+    protected function gambarUrl(): Attribute
+    {
+        return Attribute::make(
+            get: function (): string {
+                if (! empty($this->gambar) && file_exists(public_path($this->gambar))) {
+                    return asset($this->gambar);
+                }
+
+                return asset('images/menu/placeholder.svg');
+            }
+        );
+    }
 
     /**
      * Relasi One-to-Many: 1 menu dapat muncul di banyak baris detail transaksi.

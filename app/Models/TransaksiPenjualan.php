@@ -17,6 +17,7 @@ class TransaksiPenjualan extends Model
         'user_id',
         'laporan_penjualan_id',
         'nomor_transaksi',
+        'nama_pelanggan',
         'tanggal_transaksi',
         'total_bayar',
     ];
