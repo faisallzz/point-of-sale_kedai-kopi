@@ -18,9 +18,18 @@ class DatabaseSeeder extends Seeder
         // 1. Data Akun Pengguna (3 Aktor)
         $this->call([UserSeeder::class]);
 
-        // 2. Data Master Bahan Baku (2 item)
+        // 2. Data Master Bahan Baku Realistis Standar Kedai Kopi (11 item)
         $kopi = BahanBaku::create(['nama_bahan_baku' => 'Biji Kopi Arabika', 'stok' => 5000, 'satuan' => 'gram']);
         $susu = BahanBaku::create(['nama_bahan_baku' => 'Susu Segar UHT', 'stok' => 10000, 'satuan' => 'ml']);
+        $air = BahanBaku::create(['nama_bahan_baku' => 'Air Mineral Seduh', 'stok' => 30000, 'satuan' => 'ml']);
+        $gulaAren = BahanBaku::create(['nama_bahan_baku' => 'Gula Aren Cair', 'stok' => 3000, 'satuan' => 'ml']);
+        $simpleSyrup = BahanBaku::create(['nama_bahan_baku' => 'Gula Pasir Cair', 'stok' => 3000, 'satuan' => 'ml']);
+        $karamel = BahanBaku::create(['nama_bahan_baku' => 'Sirup Karamel', 'stok' => 2000, 'satuan' => 'ml']);
+        $vanila = BahanBaku::create(['nama_bahan_baku' => 'Sirup Vanila', 'stok' => 2000, 'satuan' => 'ml']);
+        $hazelnut = BahanBaku::create(['nama_bahan_baku' => 'Sirup Hazelnut', 'stok' => 2000, 'satuan' => 'ml']);
+        $sausCokelat = BahanBaku::create(['nama_bahan_baku' => 'Saus Cokelat', 'stok' => 2500, 'satuan' => 'ml']);
+        $bubukKakao = BahanBaku::create(['nama_bahan_baku' => 'Bubuk Kakao', 'stok' => 1000, 'satuan' => 'gram']);
+        $esBatu = BahanBaku::create(['nama_bahan_baku' => 'Es Batu Kristal', 'stok' => 15000, 'satuan' => 'gram']);
 
         // 3. Data Master Menu (7 menu kopi)
         $espresso = Menu::create(['nama_menu' => 'Espresso', 'harga_jual' => 18000, 'gambar' => 'images/menu/espresso.jpg']);
@@ -31,18 +40,43 @@ class DatabaseSeeder extends Seeder
         $mocha = Menu::create(['nama_menu' => 'Mocha', 'harga_jual' => 27000, 'gambar' => 'images/menu/mocha.jpg']);
         $coldBrew = Menu::create(['nama_menu' => 'Cold Brew', 'harga_jual' => 26000, 'gambar' => 'images/menu/cold-brew.jpg']);
 
-        // 4. Data Pivot Komposisi Resep
+        // 4. Data Pivot Komposisi Resep Realistis Standar Kedai Kopi
+        // 1. Espresso (Ekstraksi 18g biji kopi + 40ml air seduh)
         KomposisiMenu::create(['menu_id' => $espresso->id, 'bahan_baku_id' => $kopi->id, 'jumlah_penggunaan' => 18]);
+        KomposisiMenu::create(['menu_id' => $espresso->id, 'bahan_baku_id' => $air->id, 'jumlah_penggunaan' => 40]);
+
+        // 2. Caffe Latte (18g biji kopi + 40ml air seduh + 180ml susu segar UHT)
         KomposisiMenu::create(['menu_id' => $latte->id, 'bahan_baku_id' => $kopi->id, 'jumlah_penggunaan' => 18]);
-        KomposisiMenu::create(['menu_id' => $latte->id, 'bahan_baku_id' => $susu->id, 'jumlah_penggunaan' => 150]);
+        KomposisiMenu::create(['menu_id' => $latte->id, 'bahan_baku_id' => $air->id, 'jumlah_penggunaan' => 40]);
+        KomposisiMenu::create(['menu_id' => $latte->id, 'bahan_baku_id' => $susu->id, 'jumlah_penggunaan' => 180]);
+
+        // 3. Americano (18g biji kopi + 200ml air seduh)
         KomposisiMenu::create(['menu_id' => $americano->id, 'bahan_baku_id' => $kopi->id, 'jumlah_penggunaan' => 18]);
+        KomposisiMenu::create(['menu_id' => $americano->id, 'bahan_baku_id' => $air->id, 'jumlah_penggunaan' => 200]);
+
+        // 4. Cappuccino (18g biji kopi + 40ml air seduh + 120ml susu segar UHT + 2g bubuk kakao dusting)
         KomposisiMenu::create(['menu_id' => $cappuccino->id, 'bahan_baku_id' => $kopi->id, 'jumlah_penggunaan' => 18]);
+        KomposisiMenu::create(['menu_id' => $cappuccino->id, 'bahan_baku_id' => $air->id, 'jumlah_penggunaan' => 40]);
         KomposisiMenu::create(['menu_id' => $cappuccino->id, 'bahan_baku_id' => $susu->id, 'jumlah_penggunaan' => 120]);
+        KomposisiMenu::create(['menu_id' => $cappuccino->id, 'bahan_baku_id' => $bubukKakao->id, 'jumlah_penggunaan' => 2]);
+
+        // 5. Caramel Macchiato (18g biji kopi + 40ml air seduh + 150ml susu + 15ml sirup vanila + 20ml sirup karamel)
         KomposisiMenu::create(['menu_id' => $macchiato->id, 'bahan_baku_id' => $kopi->id, 'jumlah_penggunaan' => 18]);
+        KomposisiMenu::create(['menu_id' => $macchiato->id, 'bahan_baku_id' => $air->id, 'jumlah_penggunaan' => 40]);
         KomposisiMenu::create(['menu_id' => $macchiato->id, 'bahan_baku_id' => $susu->id, 'jumlah_penggunaan' => 150]);
+        KomposisiMenu::create(['menu_id' => $macchiato->id, 'bahan_baku_id' => $vanila->id, 'jumlah_penggunaan' => 15]);
+        KomposisiMenu::create(['menu_id' => $macchiato->id, 'bahan_baku_id' => $karamel->id, 'jumlah_penggunaan' => 20]);
+
+        // 6. Mocha (18g biji kopi + 40ml air seduh + 150ml susu + 30ml saus cokelat)
         KomposisiMenu::create(['menu_id' => $mocha->id, 'bahan_baku_id' => $kopi->id, 'jumlah_penggunaan' => 18]);
+        KomposisiMenu::create(['menu_id' => $mocha->id, 'bahan_baku_id' => $air->id, 'jumlah_penggunaan' => 40]);
         KomposisiMenu::create(['menu_id' => $mocha->id, 'bahan_baku_id' => $susu->id, 'jumlah_penggunaan' => 150]);
+        KomposisiMenu::create(['menu_id' => $mocha->id, 'bahan_baku_id' => $sausCokelat->id, 'jumlah_penggunaan' => 30]);
+
+        // 7. Cold Brew (25g biji kopi + 200ml air seduh + 80g es batu kristal)
         KomposisiMenu::create(['menu_id' => $coldBrew->id, 'bahan_baku_id' => $kopi->id, 'jumlah_penggunaan' => 25]);
+        KomposisiMenu::create(['menu_id' => $coldBrew->id, 'bahan_baku_id' => $air->id, 'jumlah_penggunaan' => 200]);
+        KomposisiMenu::create(['menu_id' => $coldBrew->id, 'bahan_baku_id' => $esBatu->id, 'jumlah_penggunaan' => 80]);
 
         // 5. Data Rekap Laporan Bulanan (1 baris)
         $laporan = LaporanPenjualan::create([
