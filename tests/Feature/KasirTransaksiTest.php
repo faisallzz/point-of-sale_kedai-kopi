@@ -2,7 +2,9 @@
 
 namespace Tests\Feature;
 
+use App\Models\BahanBaku;
 use App\Models\DetailTransaksi;
+use App\Models\KomposisiMenu;
 use App\Models\LaporanPenjualan;
 use App\Models\Menu;
 use App\Models\TransaksiPenjualan;
@@ -421,5 +423,109 @@ class KasirTransaksiTest extends TestCase
         $pemilikResponse->assertStatus(403);
 
         $this->assertDatabaseHas('transaksi_penjualans', ['id' => $trx->id]);
+    }
+
+    /**
+     * 13. Transaksi penjualan secara otomatis memotong stok bahan baku sesuai komposisi resep.
+     */
+    public function test_transaksi_otomatis_memotong_stok_bahan_baku_sesuai_resep(): void
+    {
+        $kopi = BahanBaku::create(['nama_bahan_baku' => 'Biji Kopi Uji', 'stok' => 1000, 'satuan' => 'gram']);
+        $susu = BahanBaku::create(['nama_bahan_baku' => 'Susu Uji', 'stok' => 2000, 'satuan' => 'ml']);
+
+        $menu = Menu::create(['nama_menu' => 'Latte Auto Stok', 'harga_jual' => 25000]);
+        KomposisiMenu::create(['menu_id' => $menu->id, 'bahan_baku_id' => $kopi->id, 'jumlah_penggunaan' => 18]);
+        KomposisiMenu::create(['menu_id' => $menu->id, 'bahan_baku_id' => $susu->id, 'jumlah_penggunaan' => 150]);
+
+        $response = $this->actingAs($this->kasir)->post(route('transaksi.store'), [
+            'nama_pelanggan' => 'Pelanggan Auto Stok',
+            'items' => [
+                ['menu_id' => $menu->id, 'jumlah' => 2],
+            ],
+        ]);
+
+        $response->assertRedirect(route('transaksi.index'));
+        $response->assertSessionHas('success');
+
+        // Stok biji kopi: 1000 - (18 * 2) = 964
+        $this->assertEquals(964, (float) $kopi->fresh()->stok);
+        // Stok susu: 2000 - (150 * 2) = 1700
+        $this->assertEquals(1700, (float) $susu->fresh()->stok);
+    }
+
+    /**
+     * 14. Transaksi ditolak jika stok bahan baku tidak mencukupi untuk memenuhi pesanan.
+     */
+    public function test_transaksi_ditolak_jika_stok_bahan_baku_tidak_mencukupi(): void
+    {
+        $kopi = BahanBaku::create(['nama_bahan_baku' => 'Biji Kopi Kurang', 'stok' => 20, 'satuan' => 'gram']);
+        $menu = Menu::create(['nama_menu' => 'Espresso Kurang Stok', 'harga_jual' => 18000]);
+        KomposisiMenu::create(['menu_id' => $menu->id, 'bahan_baku_id' => $kopi->id, 'jumlah_penggunaan' => 18]);
+
+        // Pesan 2 porsi butuh 36 gram, tapi stok hanya 20 gram
+        $response = $this->actingAs($this->kasir)->post(route('transaksi.store'), [
+            'nama_pelanggan' => 'Pelanggan Kurang Stok',
+            'items' => [
+                ['menu_id' => $menu->id, 'jumlah' => 2],
+            ],
+        ]);
+
+        $response->assertSessionHas('error');
+        $this->assertDatabaseMissing('transaksi_penjualans', ['nama_pelanggan' => 'Pelanggan Kurang Stok']);
+
+        // Stok tidak berubah
+        $this->assertEquals(20, (float) $kopi->fresh()->stok);
+    }
+
+    /**
+     * 15. Hapus transaksi mengembalikan (restock) stok bahan baku yang terpakai.
+     */
+    public function test_hapus_transaksi_mengembalikan_stok_bahan_baku(): void
+    {
+        $kopi = BahanBaku::create(['nama_bahan_baku' => 'Biji Restock', 'stok' => 500, 'satuan' => 'gram']);
+        $menu = Menu::create(['nama_menu' => 'Cold Brew Restock', 'harga_jual' => 25000]);
+        KomposisiMenu::create(['menu_id' => $menu->id, 'bahan_baku_id' => $kopi->id, 'jumlah_penggunaan' => 25]);
+
+        // Simpan transaksi 2 porsi (konsumsi 50g)
+        $this->actingAs($this->kasir)->post(route('transaksi.store'), [
+            'nama_pelanggan' => 'Pelanggan Void',
+            'items' => [
+                ['menu_id' => $menu->id, 'jumlah' => 2],
+            ],
+        ]);
+
+        $this->assertEquals(450, (float) $kopi->fresh()->stok);
+
+        $trx = TransaksiPenjualan::where('nama_pelanggan', 'Pelanggan Void')->first();
+        $this->assertNotNull($trx);
+
+        // Hapus transaksi
+        $response = $this->actingAs($this->kasir)->delete(route('transaksi.destroy', $trx));
+        $response->assertRedirect(route('transaksi.index'));
+        $response->assertSessionHas('success');
+
+        // Stok kembali ke 500
+        $this->assertEquals(500, (float) $kopi->fresh()->stok);
+        $this->assertDatabaseMissing('transaksi_penjualans', ['id' => $trx->id]);
+    }
+
+    /**
+     * 16. Menu otomatis menjadi tidak tersedia (is_tersedia = false) jika bahan baku habis.
+     */
+    public function test_menu_otomatis_tidak_tersedia_jika_bahan_baku_habis(): void
+    {
+        $kopi = BahanBaku::create(['nama_bahan_baku' => 'Biji Habis', 'stok' => 0, 'satuan' => 'gram']);
+        $menu = Menu::create(['nama_menu' => 'Espresso Habis', 'harga_jual' => 18000]);
+        KomposisiMenu::create(['menu_id' => $menu->id, 'bahan_baku_id' => $kopi->id, 'jumlah_penggunaan' => 18]);
+
+        $this->assertFalse($menu->is_tersedia);
+        $this->assertEquals(0, $menu->stok_porsi);
+        $this->assertContains('Biji Habis', $menu->bahan_habis);
+
+        // Tambah stok -> menu menjadi tersedia
+        $kopi->update(['stok' => 54]);
+        $menu->unsetRelation('komposisiMenus');
+        $this->assertTrue($menu->is_tersedia);
+        $this->assertEquals(3, $menu->stok_porsi);
     }
 }

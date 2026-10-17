@@ -31,7 +31,7 @@ class DashboardController extends Controller
     {
         $totalMenu = Menu::count();
         $transaksiKasir = TransaksiPenjualan::where('user_id', auth()->id())->count();
-        $menus = Menu::take(5)->get();
+        $menus = Menu::with('komposisiMenus.bahanBaku')->take(6)->get();
 
         return view('dashboard.kasir', compact('totalMenu', 'transaksiKasir', 'menus'));
     }

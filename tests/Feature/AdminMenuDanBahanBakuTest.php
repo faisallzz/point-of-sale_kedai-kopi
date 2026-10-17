@@ -321,4 +321,36 @@ class AdminMenuDanBahanBakuTest extends TestCase
         $this->delete(route('menus.destroy', $menu))->assertRedirect(route('login'));
         $this->delete(route('bahan-baku.destroy', $bahan))->assertRedirect(route('login'));
     }
+
+    /**
+     * 10. Kondisi stok bahan baku dievaluasi secara cerdas berdasarkan satuan ukuran (unit-aware).
+     */
+    public function test_kondisi_stok_bahan_baku_cerdas_berdasarkan_satuan(): void
+    {
+        // Satuan pcs: 50 pcs harus 'Aman', bukan 'Perlu Ditambah'
+        $cup = BahanBaku::create(['nama_bahan_baku' => 'Paper Cup 8oz', 'stok' => 50, 'satuan' => 'pcs']);
+        $this->assertEquals('Aman', $cup->status_kondisi_stok);
+
+        // Satuan pcs: 10 pcs harus 'Perlu Ditambah'
+        $cupTipis = BahanBaku::create(['nama_bahan_baku' => 'Cup Menipis', 'stok' => 10, 'satuan' => 'pcs']);
+        $this->assertEquals('Perlu Ditambah', $cupTipis->status_kondisi_stok);
+
+        // Satuan gram: 2000g 'Aman', 300g 'Perlu Ditambah'
+        $kopiAman = BahanBaku::create(['nama_bahan_baku' => 'Kopi Aman', 'stok' => 2000, 'satuan' => 'gram']);
+        $this->assertEquals('Aman', $kopiAman->status_kondisi_stok);
+
+        $kopiTipis = BahanBaku::create(['nama_bahan_baku' => 'Kopi Tipis', 'stok' => 300, 'satuan' => 'gram']);
+        $this->assertEquals('Perlu Ditambah', $kopiTipis->status_kondisi_stok);
+
+        // Stok 0: 'Habis'
+        $habis = BahanBaku::create(['nama_bahan_baku' => 'Bahan Nol', 'stok' => 0, 'satuan' => 'pcs']);
+        $this->assertEquals('Habis', $habis->status_kondisi_stok);
+
+        // Tampilan di /bahan-baku
+        $response = $this->actingAs($this->admin)->get(route('bahan-baku.index'));
+        $response->assertStatus(200);
+        $response->assertSee('Aman');
+        $response->assertSee('Perlu Ditambah');
+        $response->assertSee('Habis');
+    }
 }

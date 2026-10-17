@@ -57,14 +57,25 @@
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             @forelse($menus as $menu)
-                <div class="p-4 rounded-xl border border-stone-200 bg-stone-50 hover:bg-emerald-50/50 hover:border-emerald-300 transition flex items-center justify-between">
+                <div class="p-4 rounded-xl border {{ $menu->is_tersedia ? 'border-stone-200 bg-stone-50 hover:bg-emerald-50/50 hover:border-emerald-300' : 'border-rose-200 bg-rose-50/30 opacity-75' }} transition flex items-center justify-between">
                     <div>
-                        <p class="font-bold text-sm text-stone-800">{{ $menu->nama_menu }}</p>
+                        <div class="flex items-center gap-2">
+                            <p class="font-bold text-sm text-stone-800">{{ $menu->nama_menu }}</p>
+                            @if(! $menu->is_tersedia)
+                                <span class="px-1.5 py-0.5 rounded bg-rose-100 text-rose-700 text-[9px] font-extrabold uppercase">Habis</span>
+                            @endif
+                        </div>
                         <p class="text-xs font-semibold text-emerald-700 mt-0.5">Rp {{ number_format($menu->harga_jual, 0, ',', '.') }}</p>
                     </div>
-                    <a href="{{ route('transaksi.create') }}" class="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] font-bold transition">
-                        Pesan
-                    </a>
+                    @if($menu->is_tersedia)
+                        <a href="{{ route('transaksi.create') }}" class="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] font-bold transition">
+                            Pesan
+                        </a>
+                    @else
+                        <span class="px-2.5 py-1 rounded-lg bg-stone-200 text-stone-400 text-[11px] font-bold cursor-not-allowed">
+                            Kosong
+                        </span>
+                    @endif
                 </div>
             @empty
                 <p class="text-xs text-stone-500 col-span-3 text-center py-4">Belum ada menu yang terdaftar.</p>

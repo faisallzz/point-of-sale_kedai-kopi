@@ -47,12 +47,21 @@
             <!-- Grid Menu: 2 kolom di HP, 3 kolom di layar besar -->
             <div class="grid grid-cols-2 md:grid-cols-3 gap-3.5 sm:gap-4">
                 @foreach ($menus as $menu)
+                    @php
+                        $tersedia = $menu->is_tersedia;
+                        $stokPorsi = $menu->stok_porsi;
+                    @endphp
                     <div 
-                        onclick="tambahItem({{ $menu->id }})"
-                        role="button"
-                        tabindex="0"
-                        onkeydown="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); tambahItem({{ $menu->id }}); }"
-                        class="group bg-white rounded-2xl border border-stone-200 hover:border-amber-500/60 shadow-sm hover:shadow-md transition duration-200 overflow-hidden flex flex-col cursor-pointer select-none"
+                        @if($tersedia)
+                            onclick="tambahItem({{ $menu->id }})"
+                            role="button"
+                            tabindex="0"
+                            onkeydown="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); tambahItem({{ $menu->id }}); }"
+                            class="group bg-white rounded-2xl border border-stone-200 hover:border-amber-500/60 shadow-sm hover:shadow-md transition duration-200 overflow-hidden flex flex-col cursor-pointer select-none"
+                        @else
+                            class="bg-stone-50 rounded-2xl border border-stone-200/80 shadow-xs opacity-60 overflow-hidden flex flex-col cursor-not-allowed select-none"
+                            title="Menu tidak dapat dipesan karena bahan baku habis: {{ implode(', ', $menu->bahan_habis) }}"
+                        @endif
                     >
                         <!-- Gambar Menu (Rasio 4:3) -->
                         <div class="relative w-full aspect-[4/3] bg-stone-100 overflow-hidden" style="aspect-ratio: 4/3;">
@@ -60,36 +69,66 @@
                                 src="{{ $menu->gambar_url }}" 
                                 alt="{{ $menu->nama_menu }}"
                                 loading="lazy"
-                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                class="w-full h-full object-cover {{ $tersedia ? 'group-hover:scale-105 transition-transform duration-300' : 'grayscale' }}"
                             >
-                            <span class="absolute top-2 right-2 bg-amber-950/80 text-amber-200 text-[10px] font-bold px-2 py-0.5 rounded-full backdrop-blur-sm shadow">
-                                Kopi
-                            </span>
+                            @if($tersedia)
+                                <span class="absolute top-2 right-2 bg-amber-950/80 text-amber-200 text-[10px] font-bold px-2 py-0.5 rounded-full backdrop-blur-sm shadow">
+                                    Kopi
+                                </span>
+                                @if($stokPorsi !== null && $stokPorsi <= 10)
+                                    <span class="absolute bottom-2 left-2 bg-amber-500/90 text-stone-900 text-[10px] font-extrabold px-2 py-0.5 rounded-md backdrop-blur-sm shadow">
+                                        Sisa {{ $stokPorsi }} porsi
+                                    </span>
+                                @endif
+                            @else
+                                <span class="absolute top-2 right-2 bg-rose-600 text-white text-[10px] font-extrabold px-2 py-0.5 rounded-full shadow">
+                                    ✕ Habis
+                                </span>
+                                <div class="absolute inset-0 bg-stone-900/40 flex items-center justify-center">
+                                    <span class="px-2.5 py-1 rounded-lg bg-rose-600/90 text-white text-xs font-extrabold shadow">
+                                        Stok Habis
+                                    </span>
+                                </div>
+                            @endif
                         </div>
 
                         <!-- Info Menu & Tombol Tambah -->
                         <div class="p-3 sm:p-4 flex-1 flex flex-col justify-between">
                             <div>
-                                <h3 class="font-bold text-stone-800 text-xs sm:text-sm md:text-base leading-snug group-hover:text-amber-900 transition">
+                                <h3 class="font-bold text-stone-800 text-xs sm:text-sm md:text-base leading-snug {{ $tersedia ? 'group-hover:text-amber-900' : 'text-stone-400' }} transition">
                                     {{ $menu->nama_menu }}
                                 </h3>
-                                <p class="text-xs sm:text-sm font-extrabold text-emerald-700 mt-1">
+                                <p class="text-xs sm:text-sm font-extrabold {{ $tersedia ? 'text-emerald-700' : 'text-stone-400' }} mt-1">
                                     Rp {{ number_format($menu->harga_jual, 0, ',', '.') }}
                                 </p>
                             </div>
 
                             <div class="mt-3 pt-2.5 border-t border-stone-100 flex items-center justify-between">
-                                <span class="text-[11px] text-stone-400 group-hover:text-stone-600 font-medium">
-                                    Tambah
-                                </span>
-                                <button 
-                                    type="button" 
-                                    class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-amber-50 group-hover:bg-emerald-600 text-amber-900 group-hover:text-white flex items-center justify-center font-bold text-sm sm:text-base transition shadow-sm"
-                                    aria-label="Tambah {{ $menu->nama_menu }} ke pesanan"
-                                    onclick="event.stopPropagation(); tambahItem({{ $menu->id }});"
-                                >
-                                    +
-                                </button>
+                                @if($tersedia)
+                                    <span class="text-[11px] text-stone-400 group-hover:text-stone-600 font-medium">
+                                        Tambah
+                                    </span>
+                                    <button 
+                                        type="button" 
+                                        class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-amber-50 group-hover:bg-emerald-600 text-amber-900 group-hover:text-white flex items-center justify-center font-bold text-sm sm:text-base transition shadow-sm"
+                                        aria-label="Tambah {{ $menu->nama_menu }} ke pesanan"
+                                        onclick="event.stopPropagation(); tambahItem({{ $menu->id }});"
+                                    >
+                                        +
+                                    </button>
+                                @else
+                                    <span class="text-[11px] text-rose-500 font-bold">
+                                        Bahan Kosong
+                                    </span>
+                                    <button 
+                                        type="button" 
+                                        disabled
+                                        class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-stone-200 text-stone-400 flex items-center justify-center font-bold text-sm cursor-not-allowed"
+                                        aria-label="{{ $menu->nama_menu }} habis"
+                                    >
+                                        ✕
+                                    </button>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -229,6 +268,9 @@
             'nama' => $item->nama_menu,
             'harga' => (int) round($item->harga_jual),
             'gambar_url' => $item->gambar_url,
+            'is_tersedia' => (bool) $item->is_tersedia,
+            'stok_porsi' => $item->stok_porsi,
+            'bahan_habis' => $item->bahan_habis,
         ];
     })->values();
 
@@ -261,11 +303,25 @@
     }
 
     /**
-     * Tambah 1 porsi menu ke pesanan (maks 99)
+     * Tambah 1 porsi menu ke pesanan (maksimal porsi tersedia / 99)
      */
     function tambahItem(menuId) {
-        if (!menusMap[menuId]) return;
+        const menu = menusMap[menuId];
+        if (!menu) return;
+
+        if (!menu.is_tersedia) {
+            alert('Maaf, menu "' + menu.nama + '" saat ini tidak dapat dipesan karena bahan baku habis (' + (menu.bahan_habis || []).join(', ') + ').');
+            return;
+        }
+
         const currentQty = cart[menuId] || 0;
+        const maxPorsi = menu.stok_porsi !== null ? menu.stok_porsi : 99;
+
+        if (currentQty >= maxPorsi) {
+            alert('Stok bahan baku saat ini hanya mencukupi untuk ' + maxPorsi + ' porsi ' + menu.nama + '.');
+            return;
+        }
+
         if (currentQty < 99) {
             cart[menuId] = currentQty + 1;
         }

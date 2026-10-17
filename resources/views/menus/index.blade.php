@@ -62,9 +62,18 @@
                                 @endforelse
                             </td>
                             <td class="px-5 py-4">
-                                <span class="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[10px] uppercase">
-                                    Aktif Dijual
-                                </span>
+                                @if($menu->is_tersedia)
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200 font-bold text-[10px] uppercase">
+                                        <span>●</span> Aktif Dijual
+                                        @if($menu->stok_porsi !== null)
+                                            <span class="text-[9px] font-semibold opacity-80">(~{{ number_format($menu->stok_porsi, 0, ',', '.') }} porsi)</span>
+                                        @endif
+                                    </span>
+                                @else
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-rose-100 text-rose-800 border border-rose-200 font-bold text-[10px] uppercase" title="Bahan baku habis: {{ implode(', ', $menu->bahan_habis) }}">
+                                        <span>✕</span> Stok Habis
+                                    </span>
+                                @endif
                             </td>
                             @if(auth()->user()->isAdmin())
                                 <td class="px-5 py-4 text-center">

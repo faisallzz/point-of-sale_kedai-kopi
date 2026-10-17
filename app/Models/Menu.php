@@ -41,6 +41,82 @@ class Menu extends Model
     }
 
     /**
+     * Hitung perkiraan sisa porsi menu yang dapat dibuat berdasarkan stok bahan baku terendah.
+     */
+    protected function stokPorsi(): Attribute
+    {
+        return Attribute::make(
+            get: function (): ?int {
+                $komposisis = $this->relationLoaded('komposisiMenus')
+                    ? $this->komposisiMenus
+                    : $this->komposisiMenus()->with('bahanBaku')->get();
+
+                if ($komposisis->isEmpty()) {
+                    return null;
+                }
+
+                $minPorsi = null;
+                foreach ($komposisis as $komposisi) {
+                    $bahan = $komposisi->bahanBaku;
+                    $takaran = (float) $komposisi->jumlah_penggunaan;
+
+                    if ($takaran <= 0) {
+                        continue;
+                    }
+
+                    $stok = $bahan ? (float) $bahan->stok : 0;
+                    $porsi = (int) floor($stok / $takaran);
+
+                    $minPorsi = ($minPorsi === null) ? $porsi : min($minPorsi, $porsi);
+                }
+
+                return $minPorsi ?? 0;
+            }
+        );
+    }
+
+    /**
+     * Cek apakah menu aktif dan dapat dijual (seluruh bahan penyusun mencukupi minimal 1 porsi).
+     */
+    protected function isTersedia(): Attribute
+    {
+        return Attribute::make(
+            get: function (): bool {
+                $porsi = $this->stok_porsi;
+
+                return $porsi === null || $porsi > 0;
+            }
+        );
+    }
+
+    /**
+     * Daftar nama bahan baku yang stoknya tidak cukup untuk menu ini.
+     */
+    protected function bahanHabis(): Attribute
+    {
+        return Attribute::make(
+            get: function (): array {
+                $komposisis = $this->relationLoaded('komposisiMenus')
+                    ? $this->komposisiMenus
+                    : $this->komposisiMenus()->with('bahanBaku')->get();
+
+                $habis = [];
+                foreach ($komposisis as $komposisi) {
+                    $bahan = $komposisi->bahanBaku;
+                    $takaran = (float) $komposisi->jumlah_penggunaan;
+                    $stok = $bahan ? (float) $bahan->stok : 0;
+
+                    if ($stok < $takaran) {
+                        $habis[] = $bahan?->nama_bahan_baku ?? 'Bahan Baku';
+                    }
+                }
+
+                return $habis;
+            }
+        );
+    }
+
+    /**
      * Relasi One-to-Many: 1 menu dapat muncul di banyak baris detail transaksi.
      */
     public function detailTransaksis(): HasMany

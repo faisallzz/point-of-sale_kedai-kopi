@@ -48,8 +48,8 @@
                                 {{ $b->satuan }}
                             </td>
                             <td class="px-5 py-4">
-                                <span class="px-2.5 py-1 rounded-full {{ $b->stok > 1000 ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800' }} font-bold text-[10px] uppercase">
-                                    {{ $b->stok > 1000 ? 'Aman' : 'Perlu Ditambah' }}
+                                <span class="px-2.5 py-1 rounded-full border {{ $b->badge_kondisi_class }} font-bold text-[10px] uppercase">
+                                    {{ $b->status_kondisi_stok }}
                                 </span>
                             </td>
                             <td class="px-5 py-4 text-center">
