@@ -49,8 +49,16 @@
                             <td class="px-5 py-4 font-bold text-stone-800 text-sm">
                                 {{ $menu->nama_menu }}
                             </td>
-                            <td class="px-5 py-4 font-extrabold text-emerald-700 text-sm">
-                                Rp {{ number_format($menu->harga_jual, 0, ',', '.') }}
+                            <td class="px-5 py-4">
+                                <div class="font-extrabold text-emerald-700 text-sm">
+                                    Rp {{ number_format($menu->harga_jual, 0, ',', '.') }}
+                                </div>
+                                @if($menu->biaya_hpp > 0)
+                                    <div class="text-[11px] text-stone-500 mt-0.5" title="HPP Modal Bahan Baku: Rp {{ number_format($menu->biaya_hpp, 0, ',', '.') }}">
+                                        Modal: Rp {{ number_format($menu->biaya_hpp, 0, ',', '.') }}
+                                        <span class="text-emerald-600 font-bold">({{ $menu->margin_laba }}%)</span>
+                                    </div>
+                                @endif
                             </td>
                             <td class="px-5 py-4 text-stone-600">
                                 @forelse($menu->komposisiMenus as $komp)

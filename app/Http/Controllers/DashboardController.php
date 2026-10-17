@@ -41,10 +41,13 @@ class DashboardController extends Controller
      */
     public function pemilik(): View
     {
-        $totalPendapatan = LaporanPenjualan::sum('total_pendapatan');
+        $totalPendapatan = (float) LaporanPenjualan::sum('total_pendapatan');
+        $totalPengeluaran = (float) LaporanPenjualan::sum('total_pengeluaran');
+        $totalKeuntungan = (float) LaporanPenjualan::sum('total_keuntungan');
+        $rataRataMargin = $totalPendapatan > 0 ? round(($totalKeuntungan / $totalPendapatan) * 100, 1) : 0;
         $totalTransaksi = TransaksiPenjualan::count();
         $laporans = LaporanPenjualan::latest()->take(5)->get();
 
-        return view('dashboard.pemilik', compact('totalPendapatan', 'totalTransaksi', 'laporans'));
+        return view('dashboard.pemilik', compact('totalPendapatan', 'totalPengeluaran', 'totalKeuntungan', 'rataRataMargin', 'totalTransaksi', 'laporans'));
     }
 }

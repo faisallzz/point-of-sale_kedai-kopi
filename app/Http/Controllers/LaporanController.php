@@ -14,6 +14,11 @@ class LaporanController extends Controller
     {
         $laporans = LaporanPenjualan::orderBy('bulan', 'desc')->paginate(10);
 
-        return view('laporans.index', compact('laporans'));
+        $totalOmset = (float) LaporanPenjualan::sum('total_pendapatan');
+        $totalPengeluaran = (float) LaporanPenjualan::sum('total_pengeluaran');
+        $totalKeuntungan = (float) LaporanPenjualan::sum('total_keuntungan');
+        $rataRataMargin = $totalOmset > 0 ? round(($totalKeuntungan / $totalOmset) * 100, 1) : 0;
+
+        return view('laporans.index', compact('laporans', 'totalOmset', 'totalPengeluaran', 'totalKeuntungan', 'rataRataMargin'));
     }
 }

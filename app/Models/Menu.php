@@ -117,6 +117,60 @@ class Menu extends Model
     }
 
     /**
+     * Hitung Harga Pokok Penjualan (HPP) modal bahan baku per porsi minuman.
+     */
+    protected function biayaHpp(): Attribute
+    {
+        return Attribute::make(
+            get: function (): float {
+                $komposisis = $this->relationLoaded('komposisiMenus')
+                    ? $this->komposisiMenus
+                    : $this->komposisiMenus()->with('bahanBaku')->get();
+
+                $totalHpp = 0.0;
+                foreach ($komposisis as $komposisi) {
+                    $bahan = $komposisi->bahanBaku;
+                    $takaran = (float) $komposisi->jumlah_penggunaan;
+                    $hargaSatuan = $bahan ? (float) $bahan->harga_satuan : 0.0;
+
+                    $totalHpp += ($takaran * $hargaSatuan);
+                }
+
+                return round($totalHpp, 2);
+            }
+        );
+    }
+
+    /**
+     * Hitung potensi laba kotor per porsi (Harga Jual - Biaya HPP).
+     */
+    protected function labaKotor(): Attribute
+    {
+        return Attribute::make(
+            get: function (): float {
+                return (float) $this->harga_jual - (float) $this->biaya_hpp;
+            }
+        );
+    }
+
+    /**
+     * Hitung persentase margin keuntungan per porsi menu.
+     */
+    protected function marginLaba(): Attribute
+    {
+        return Attribute::make(
+            get: function (): float {
+                $harga = (float) $this->harga_jual;
+                if ($harga <= 0) {
+                    return 0.0;
+                }
+
+                return round(($this->laba_kotor / $harga) * 100, 1);
+            }
+        );
+    }
+
+    /**
      * Relasi One-to-Many: 1 menu dapat muncul di banyak baris detail transaksi.
      */
     public function detailTransaksis(): HasMany

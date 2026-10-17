@@ -84,6 +84,26 @@
                 </div>
             </div>
 
+            <div>
+                <label for="harga_satuan" class="block text-xs font-bold text-stone-700 uppercase tracking-wider mb-2">
+                    Harga Beli per Satuan (Rp) <span class="text-rose-500">*</span>
+                </label>
+                <div class="relative">
+                    <span class="absolute left-4 top-2.5 text-sm font-bold text-stone-400">Rp</span>
+                    <input 
+                        type="number" 
+                        step="any" 
+                        name="harga_satuan" 
+                        id="harga_satuan" 
+                        required 
+                        min="0" 
+                        value="{{ old('harga_satuan', (float) $bahanBaku->harga_satuan) }}" 
+                        class="w-full pl-12 pr-4 py-2.5 rounded-xl border border-stone-300 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition"
+                    >
+                </div>
+                <span class="text-[11px] text-stone-500 mt-1 block">Harga beli bahan dari supplier per unit satuan (Rp per gram / Rp per ml / Rp per pcs). Digunakan untuk menghitung HPP & laba di laporan owner.</span>
+            </div>
+
             <div class="pt-4 border-t border-stone-200 flex items-center justify-end gap-3">
                 <a href="{{ route('bahan-baku.index') }}" class="px-4 py-2.5 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs font-bold transition">Batal</a>
                 <button type="submit" class="px-5 py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-600 text-white text-xs font-bold shadow-md transition">Simpan Perubahan Stok</button>

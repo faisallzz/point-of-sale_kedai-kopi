@@ -28,6 +28,7 @@
                         <th class="px-5 py-3.5">Nama Bahan Baku</th>
                         <th class="px-5 py-3.5">Sisa Stok</th>
                         <th class="px-5 py-3.5">Satuan Ukuran</th>
+                        <th class="px-5 py-3.5">Harga Beli Satuan</th>
                         <th class="px-5 py-3.5">Kondisi Stok</th>
                         <th class="px-5 py-3.5 text-center">Aksi</th>
                     </tr>
@@ -46,6 +47,9 @@
                             </td>
                             <td class="px-5 py-4 font-semibold text-stone-600 uppercase">
                                 {{ $b->satuan }}
+                            </td>
+                            <td class="px-5 py-4 font-bold text-stone-700">
+                                Rp {{ number_format($b->harga_satuan, 0, ',', '.') }} <span class="text-[10px] text-stone-400 font-normal">/ {{ $b->satuan }}</span>
                             </td>
                             <td class="px-5 py-4">
                                 <span class="px-2.5 py-1 rounded-full border {{ $b->badge_kondisi_class }} font-bold text-[10px] uppercase">

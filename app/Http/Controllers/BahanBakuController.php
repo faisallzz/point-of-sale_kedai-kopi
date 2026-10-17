@@ -36,6 +36,7 @@ class BahanBakuController extends Controller
             'nama_bahan_baku' => ['required', 'string', 'max:100'],
             'stok' => ['required', 'numeric', 'min:0'],
             'satuan' => ['required', 'string', 'max:20'],
+            'harga_satuan' => ['nullable', 'numeric', 'min:0'],
         ], [
             'nama_bahan_baku.required' => 'Nama bahan baku wajib diisi.',
             'nama_bahan_baku.max' => 'Nama bahan baku maksimal 100 karakter.',
@@ -44,7 +45,11 @@ class BahanBakuController extends Controller
             'stok.min' => 'Stok tidak boleh bernilai negatif.',
             'satuan.required' => 'Satuan ukuran wajib diisi.',
             'satuan.max' => 'Satuan maksimal 20 karakter.',
+            'harga_satuan.numeric' => 'Harga beli satuan harus berupa angka.',
+            'harga_satuan.min' => 'Harga beli satuan tidak boleh bernilai negatif.',
         ]);
+
+        $validated['harga_satuan'] = $validated['harga_satuan'] ?? 0;
 
         BahanBaku::create($validated);
 
@@ -60,7 +65,7 @@ class BahanBakuController extends Controller
     }
 
     /**
-     * Perbarui data bahan baku dan sisa stok (Khusus Admin).
+     * Perbarui data bahan baku, harga modal, dan sisa stok (Khusus Admin).
      */
     public function update(Request $request, BahanBaku $bahanBaku): RedirectResponse
     {
@@ -68,6 +73,7 @@ class BahanBakuController extends Controller
             'nama_bahan_baku' => ['required', 'string', 'max:100'],
             'stok' => ['required', 'numeric', 'min:0'],
             'satuan' => ['required', 'string', 'max:20'],
+            'harga_satuan' => ['required', 'numeric', 'min:0'],
         ], [
             'nama_bahan_baku.required' => 'Nama bahan baku wajib diisi.',
             'nama_bahan_baku.max' => 'Nama bahan baku maksimal 100 karakter.',
@@ -76,6 +82,9 @@ class BahanBakuController extends Controller
             'stok.min' => 'Sisa stok tidak boleh bernilai negatif.',
             'satuan.required' => 'Satuan ukuran wajib diisi.',
             'satuan.max' => 'Satuan maksimal 20 karakter.',
+            'harga_satuan.required' => 'Harga beli satuan wajib diisi.',
+            'harga_satuan.numeric' => 'Harga beli satuan harus berupa angka.',
+            'harga_satuan.min' => 'Harga beli satuan tidak boleh bernilai negatif.',
         ]);
 
         $bahanBaku->update($validated);

@@ -18,10 +18,12 @@ class BahanBaku extends Model
         'nama_bahan_baku',
         'stok',
         'satuan',
+        'harga_satuan',
     ];
 
     protected $casts = [
         'stok' => 'decimal:2',
+        'harga_satuan' => 'decimal:2',
     ];
 
     /**

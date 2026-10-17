@@ -216,12 +216,14 @@ class AdminMenuDanBahanBakuTest extends TestCase
             'nama_bahan_baku' => 'Gula Aren Cair',
             'stok' => 500,
             'satuan' => 'ml',
+            'harga_satuan' => 50,
         ]);
 
         $response = $this->actingAs($this->admin)->put(route('bahan-baku.update', $bahan), [
             'nama_bahan_baku' => 'Gula Aren Organik',
             'stok' => 1250.5,
             'satuan' => 'ml',
+            'harga_satuan' => 60,
         ]);
 
         $response->assertRedirect(route('bahan-baku.index'));
@@ -232,6 +234,7 @@ class AdminMenuDanBahanBakuTest extends TestCase
             'nama_bahan_baku' => 'Gula Aren Organik',
             'stok' => 1250.50,
             'satuan' => 'ml',
+            'harga_satuan' => 60.00,
         ]);
     }
 

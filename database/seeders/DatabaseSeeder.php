@@ -18,18 +18,18 @@ class DatabaseSeeder extends Seeder
         // 1. Data Akun Pengguna (3 Aktor)
         $this->call([UserSeeder::class]);
 
-        // 2. Data Master Bahan Baku Realistis Standar Kedai Kopi (11 item)
-        $kopi = BahanBaku::create(['nama_bahan_baku' => 'Biji Kopi Arabika', 'stok' => 5000, 'satuan' => 'gram']);
-        $susu = BahanBaku::create(['nama_bahan_baku' => 'Susu Segar UHT', 'stok' => 10000, 'satuan' => 'ml']);
-        $air = BahanBaku::create(['nama_bahan_baku' => 'Air Mineral Seduh', 'stok' => 30000, 'satuan' => 'ml']);
-        $gulaAren = BahanBaku::create(['nama_bahan_baku' => 'Gula Aren Cair', 'stok' => 3000, 'satuan' => 'ml']);
-        $simpleSyrup = BahanBaku::create(['nama_bahan_baku' => 'Gula Pasir Cair', 'stok' => 3000, 'satuan' => 'ml']);
-        $karamel = BahanBaku::create(['nama_bahan_baku' => 'Sirup Karamel', 'stok' => 2000, 'satuan' => 'ml']);
-        $vanila = BahanBaku::create(['nama_bahan_baku' => 'Sirup Vanila', 'stok' => 2000, 'satuan' => 'ml']);
-        $hazelnut = BahanBaku::create(['nama_bahan_baku' => 'Sirup Hazelnut', 'stok' => 2000, 'satuan' => 'ml']);
-        $sausCokelat = BahanBaku::create(['nama_bahan_baku' => 'Saus Cokelat', 'stok' => 2500, 'satuan' => 'ml']);
-        $bubukKakao = BahanBaku::create(['nama_bahan_baku' => 'Bubuk Kakao', 'stok' => 1000, 'satuan' => 'gram']);
-        $esBatu = BahanBaku::create(['nama_bahan_baku' => 'Es Batu Kristal', 'stok' => 15000, 'satuan' => 'gram']);
+        // 2. Data Master Bahan Baku Realistis Standar Kedai Kopi (11 item dengan harga satuan pasar)
+        $kopi = BahanBaku::create(['nama_bahan_baku' => 'Biji Kopi Arabika', 'stok' => 5000, 'satuan' => 'gram', 'harga_satuan' => 220]);
+        $susu = BahanBaku::create(['nama_bahan_baku' => 'Susu Segar UHT', 'stok' => 10000, 'satuan' => 'ml', 'harga_satuan' => 21]);
+        $air = BahanBaku::create(['nama_bahan_baku' => 'Air Mineral Seduh', 'stok' => 30000, 'satuan' => 'ml', 'harga_satuan' => 1]);
+        $gulaAren = BahanBaku::create(['nama_bahan_baku' => 'Gula Aren Cair', 'stok' => 3000, 'satuan' => 'ml', 'harga_satuan' => 55]);
+        $simpleSyrup = BahanBaku::create(['nama_bahan_baku' => 'Gula Pasir Cair', 'stok' => 3000, 'satuan' => 'ml', 'harga_satuan' => 25]);
+        $karamel = BahanBaku::create(['nama_bahan_baku' => 'Sirup Karamel', 'stok' => 2000, 'satuan' => 'ml', 'harga_satuan' => 140]);
+        $vanila = BahanBaku::create(['nama_bahan_baku' => 'Sirup Vanila', 'stok' => 2000, 'satuan' => 'ml', 'harga_satuan' => 130]);
+        $hazelnut = BahanBaku::create(['nama_bahan_baku' => 'Sirup Hazelnut', 'stok' => 2000, 'satuan' => 'ml', 'harga_satuan' => 130]);
+        $sausCokelat = BahanBaku::create(['nama_bahan_baku' => 'Saus Cokelat', 'stok' => 2500, 'satuan' => 'ml', 'harga_satuan' => 150]);
+        $bubukKakao = BahanBaku::create(['nama_bahan_baku' => 'Bubuk Kakao', 'stok' => 1000, 'satuan' => 'gram', 'harga_satuan' => 110]);
+        $esBatu = BahanBaku::create(['nama_bahan_baku' => 'Es Batu Kristal', 'stok' => 15000, 'satuan' => 'gram', 'harga_satuan' => 2]);
 
         // 3. Data Master Menu (7 menu kopi)
         $espresso = Menu::create(['nama_menu' => 'Espresso', 'harga_jual' => 18000, 'gambar' => 'images/menu/espresso.jpg']);
@@ -78,10 +78,12 @@ class DatabaseSeeder extends Seeder
         KomposisiMenu::create(['menu_id' => $coldBrew->id, 'bahan_baku_id' => $air->id, 'jumlah_penggunaan' => 200]);
         KomposisiMenu::create(['menu_id' => $coldBrew->id, 'bahan_baku_id' => $esBatu->id, 'jumlah_penggunaan' => 80]);
 
-        // 5. Data Rekap Laporan Bulanan (1 baris)
+        // 5. Data Rekap Laporan Bulanan (1 baris: Omset Rp 42.000, Pengeluaran HPP Rp 11.780, Laba Rp 30.220)
         $laporan = LaporanPenjualan::create([
             'bulan' => 9,
             'total_pendapatan' => 42000,
+            'total_pengeluaran' => 11780,
+            'total_keuntungan' => 30220,
             'total_transaksi' => 1,
         ]);
 

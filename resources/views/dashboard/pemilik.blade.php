@@ -22,36 +22,58 @@
         </div>
     </div>
 
-    <!-- Statistik Cards -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-        <div class="bg-white rounded-2xl p-6 border border-stone-200 shadow-sm flex items-center gap-5">
-            <div class="w-14 h-14 rounded-2xl bg-amber-50 border border-amber-100 flex items-center justify-center text-3xl text-amber-600">
+    <!-- Statistik Cards (4 Metrik Finansial) -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="bg-white rounded-2xl p-5 border border-stone-200 shadow-sm flex items-center gap-4">
+            <div class="w-12 h-12 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center text-2xl text-amber-600">
                 💰
             </div>
             <div>
-                <p class="text-xs font-semibold text-stone-500 uppercase tracking-wider">Total Pendapatan Kedai</p>
-                <p class="text-3xl font-extrabold text-stone-800 mt-1">Rp {{ number_format($totalPendapatan, 0, ',', '.') }}</p>
-                <a href="{{ route('laporan.index') }}" class="text-xs font-bold text-amber-700 hover:underline">Detail Rekap Bulanan &rarr;</a>
+                <p class="text-[11px] font-bold text-stone-500 uppercase tracking-wider">Total Omset</p>
+                <p class="text-xl font-extrabold text-stone-800 mt-0.5">Rp {{ number_format($totalPendapatan, 0, ',', '.') }}</p>
+                <a href="{{ route('laporan.index') }}" class="text-[10px] font-bold text-amber-700 hover:underline">Rekap Omset &rarr;</a>
             </div>
         </div>
 
-        <div class="bg-white rounded-2xl p-6 border border-stone-200 shadow-sm flex items-center gap-5">
-            <div class="w-14 h-14 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-3xl text-indigo-600">
-                🧾
+        <div class="bg-white rounded-2xl p-5 border border-stone-200 shadow-sm flex items-center gap-4">
+            <div class="w-12 h-12 rounded-xl bg-rose-50 border border-rose-100 flex items-center justify-center text-2xl text-rose-600">
+                📦
             </div>
             <div>
-                <p class="text-xs font-semibold text-stone-500 uppercase tracking-wider">Total Transaksi Selesai</p>
-                <p class="text-3xl font-extrabold text-stone-800 mt-1">{{ $totalTransaksi }}</p>
-                <span class="text-xs text-stone-500">Akumulasi seluruh kasir</span>
+                <p class="text-[11px] font-bold text-stone-500 uppercase tracking-wider">Pengeluaran Bahan</p>
+                <p class="text-xl font-extrabold text-rose-700 mt-0.5">Rp {{ number_format($totalPengeluaran, 0, ',', '.') }}</p>
+                <span class="text-[10px] text-stone-400">Total modal HPP bahan</span>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-2xl p-5 border border-stone-200 shadow-sm flex items-center gap-4">
+            <div class="w-12 h-12 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-2xl text-emerald-600">
+                📈
+            </div>
+            <div>
+                <p class="text-[11px] font-bold text-stone-500 uppercase tracking-wider">Total Keuntungan</p>
+                <p class="text-xl font-extrabold text-emerald-700 mt-0.5">Rp {{ number_format($totalKeuntungan, 0, ',', '.') }}</p>
+                <span class="text-[10px] text-emerald-600 font-bold">Laba bersih kedai</span>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-2xl p-5 border border-stone-200 shadow-sm flex items-center gap-4">
+            <div class="w-12 h-12 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-2xl text-indigo-600">
+                📊
+            </div>
+            <div>
+                <p class="text-[11px] font-bold text-stone-500 uppercase tracking-wider">Rata-rata Margin</p>
+                <p class="text-xl font-extrabold text-indigo-700 mt-0.5">{{ $rataRataMargin }}%</p>
+                <span class="text-[10px] text-stone-400">{{ $totalTransaksi }} transaksi selesai</span>
             </div>
         </div>
     </div>
 
-    <!-- Ringkasan Laporan Terbaru -->
+    <!-- Ringkasan Laporan Finansial Terbaru -->
     <div class="bg-white rounded-2xl p-6 border border-stone-200 shadow-sm">
         <div class="flex items-center justify-between mb-4">
             <h2 class="text-base font-bold text-stone-800 flex items-center gap-2">
-                <span>📈</span> Ringkasan Laporan Pendapatan Terkini
+                <span>📈</span> Ringkasan Laporan Laba Rugi Terkini
             </h2>
             <a href="{{ route('laporan.index') }}" class="text-xs font-bold text-amber-700 hover:underline">Lihat Seluruh Laporan &rarr;</a>
         </div>
@@ -61,20 +83,34 @@
                 <thead class="bg-stone-100 text-stone-600 uppercase font-bold border-b border-stone-200">
                     <tr>
                         <th class="px-4 py-3">Periode Bulan</th>
-                        <th class="px-4 py-3">Total Transaksi</th>
-                        <th class="px-4 py-3">Total Pendapatan</th>
+                        <th class="px-4 py-3 text-center">Total Transaksi</th>
+                        <th class="px-4 py-3">Total Omset</th>
+                        <th class="px-4 py-3">Pengeluaran Bahan (HPP)</th>
+                        <th class="px-4 py-3">Laba Bersih</th>
+                        <th class="px-4 py-3 text-center">Margin</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-stone-200">
                     @forelse($laporans as $lap)
                         <tr class="hover:bg-amber-50/40 transition">
                             <td class="px-4 py-3 font-semibold text-stone-800">Bulan ke-{{ $lap->bulan }} ({{ date('Y') }})</td>
-                            <td class="px-4 py-3 font-semibold text-stone-700">{{ $lap->total_transaksi }} Pesanan</td>
-                            <td class="px-4 py-3 font-extrabold text-emerald-700">Rp {{ number_format($lap->total_pendapatan, 0, ',', '.') }}</td>
+                            <td class="px-4 py-3 font-semibold text-stone-700 text-center">
+                                <span class="px-2 py-0.5 rounded-full bg-stone-100 text-stone-700 font-bold text-[11px] border border-stone-200">
+                                    {{ $lap->total_transaksi }} Pesanan
+                                </span>
+                            </td>
+                            <td class="px-4 py-3 font-extrabold text-stone-800">Rp {{ number_format($lap->total_pendapatan, 0, ',', '.') }}</td>
+                            <td class="px-4 py-3 font-extrabold text-rose-700">Rp {{ number_format($lap->total_pengeluaran, 0, ',', '.') }}</td>
+                            <td class="px-4 py-3 font-extrabold text-emerald-700">Rp {{ number_format($lap->total_keuntungan, 0, ',', '.') }}</td>
+                            <td class="px-4 py-3 text-center">
+                                <span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[10px] border border-emerald-200">
+                                    {{ $lap->margin_persen }}%
+                                </span>
+                            </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="3" class="px-4 py-6 text-center text-stone-400">Belum ada rekapitulasi data penjualan.</td>
+                            <td colspan="6" class="px-4 py-6 text-center text-stone-400">Belum ada rekapitulasi data penjualan.</td>
                         </tr>
                     @endforelse
                 </tbody>
