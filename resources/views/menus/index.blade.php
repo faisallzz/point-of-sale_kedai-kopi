@@ -27,10 +27,14 @@
                 <thead class="bg-stone-100 text-stone-600 font-bold uppercase tracking-wider">
                     <tr>
                         <th class="px-5 py-3.5">No</th>
+                        <th class="px-5 py-3.5">Foto</th>
                         <th class="px-5 py-3.5">Nama Menu</th>
                         <th class="px-5 py-3.5">Harga Jual</th>
                         <th class="px-5 py-3.5">Komposisi Resep Bahan</th>
                         <th class="px-5 py-3.5">Status</th>
+                        @if(auth()->user()->isAdmin())
+                            <th class="px-5 py-3.5 text-center">Aksi</th>
+                        @endif
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-stone-200 bg-white">
@@ -39,11 +43,22 @@
                             <td class="px-5 py-4 font-semibold text-stone-500">
                                 {{ $menus->firstItem() + $index }}
                             </td>
-                            <td class="px-5 py-4 font-bold text-stone-800 text-sm">
-                                ☕ {{ $menu->nama_menu }}
+                            <td class="px-5 py-4">
+                                <img src="{{ $menu->gambar_url }}" alt="{{ $menu->nama_menu }}" class="w-11 h-11 rounded-xl object-cover border border-stone-200 shadow-xs">
                             </td>
-                            <td class="px-5 py-4 font-extrabold text-emerald-700 text-sm">
-                                Rp {{ number_format($menu->harga_jual, 0, ',', '.') }}
+                            <td class="px-5 py-4 font-bold text-stone-800 text-sm">
+                                {{ $menu->nama_menu }}
+                            </td>
+                            <td class="px-5 py-4">
+                                <div class="font-extrabold text-emerald-700 text-sm">
+                                    Rp {{ number_format($menu->harga_jual, 0, ',', '.') }}
+                                </div>
+                                @if($menu->biaya_hpp > 0)
+                                    <div class="text-[11px] text-stone-500 mt-0.5" title="HPP Modal Bahan Baku: Rp {{ number_format($menu->biaya_hpp, 0, ',', '.') }}">
+                                        Modal: Rp {{ number_format($menu->biaya_hpp, 0, ',', '.') }}
+                                        <span class="text-emerald-600 font-bold">({{ $menu->margin_laba }}%)</span>
+                                    </div>
+                                @endif
                             </td>
                             <td class="px-5 py-4 text-stone-600">
                                 @forelse($menu->komposisiMenus as $komp)
@@ -55,14 +70,62 @@
                                 @endforelse
                             </td>
                             <td class="px-5 py-4">
-                                <span class="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[10px] uppercase">
-                                    Aktif Dijual
-                                </span>
+                                @if($menu->is_tersedia)
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200 font-bold text-[10px] uppercase">
+                                        <span>●</span> Aktif Dijual
+                                        @if($menu->stok_porsi !== null)
+                                            <span class="text-[9px] font-semibold opacity-80">(~{{ number_format($menu->stok_porsi, 0, ',', '.') }} porsi)</span>
+                                        @endif
+                                    </span>
+                                @else
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-rose-100 text-rose-800 border border-rose-200 font-bold text-[10px] uppercase" title="Bahan baku habis: {{ implode(', ', $menu->bahan_habis) }}">
+                                        <span>✕</span> Stok Habis
+                                    </span>
+                                @endif
                             </td>
+                            @if(auth()->user()->isAdmin())
+                                <td class="px-5 py-4 text-center">
+                                    <div class="inline-flex items-center gap-1.5">
+                                        <a
+                                            href="{{ route('menus.edit', $menu) }}"
+                                            class="px-2.5 py-1.5 rounded-lg bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold text-xs border border-stone-300 transition"
+                                            title="Edit nama, harga, resep, atau gambar menu"
+                                        >
+                                            ✏️ Edit
+                                        </a>
+
+                                        @if(($menu->detail_transaksis_count ?? 0) === 0)
+                                            <form
+                                                action="{{ route('menus.destroy', $menu) }}"
+                                                method="POST"
+                                                onsubmit="return confirm('Apakah Anda yakin ingin menghapus menu {{ $menu->nama_menu }}? Tindakan ini tidak dapat dibatalkan.');"
+                                                class="inline"
+                                            >
+                                                @csrf
+                                                @method('DELETE')
+                                                <button
+                                                    type="submit"
+                                                    class="px-2.5 py-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-xs border border-rose-200 transition"
+                                                    title="Hapus menu yang belum pernah terjual"
+                                                >
+                                                    🗑️ Hapus
+                                                </button>
+                                            </form>
+                                        @else
+                                            <span
+                                                class="px-2 py-1 rounded text-[11px] font-semibold text-stone-400 bg-stone-100 border border-stone-200 cursor-not-allowed"
+                                                title="Menu sudah pernah terjual dalam transaksi dan tidak dapat dihapus"
+                                            >
+                                                🔒 Terjual
+                                            </span>
+                                        @endif
+                                    </div>
+                                </td>
+                            @endif
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="px-5 py-8 text-center text-stone-400">Belum ada menu yang terdaftar.</td>
+                            <td colspan="{{ auth()->user()->isAdmin() ? '7' : '6' }}" class="px-5 py-8 text-center text-stone-400">Belum ada menu yang terdaftar.</td>
                         </tr>
                     @endforelse
                 </tbody>
