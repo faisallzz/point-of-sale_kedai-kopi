@@ -22,17 +22,11 @@ class KomposisiMenu extends Model
         'jumlah_penggunaan' => 'decimal:2',
     ];
 
-    /**
-     * Relasi BelongsTo: Merujuk ke menu terkait.
-     */
     public function menu(): BelongsTo
     {
         return $this->belongsTo(Menu::class, 'menu_id');
     }
 
-    /**
-     * Relasi BelongsTo: Merujuk ke bahan baku yang dipakai.
-     */
     public function bahanBaku(): BelongsTo
     {
         return $this->belongsTo(BahanBaku::class, 'bahan_baku_id');
