@@ -247,8 +247,7 @@
                         <button 
                             type="submit" 
                             id="btn-submit"
-                            disabled
-                            class="w-full py-3 px-4 rounded-xl bg-emerald-700 hover:bg-emerald-600 disabled:bg-stone-200 disabled:text-stone-400 disabled:cursor-not-allowed text-white text-xs sm:text-sm font-bold shadow-md transition flex items-center justify-center gap-2"
+                            class="w-full py-3 px-4 rounded-xl bg-stone-200 hover:bg-stone-300 text-stone-600 text-xs sm:text-sm font-bold shadow-sm transition flex items-center justify-center gap-2 cursor-pointer"
                         >
                             <span>💳</span> Simpan Transaksi
                         </button>
@@ -385,7 +384,8 @@
             badgeTotalItemEl.textContent = '0 Item';
             displayTotalEl.textContent = 'Rp 0';
             labelSubtotalInfoEl.textContent = '0 porsi dipesan';
-            btnSubmitEl.disabled = true;
+            btnSubmitEl.disabled = false;
+            btnSubmitEl.className = 'w-full py-3 px-4 rounded-xl bg-stone-200 hover:bg-stone-300 text-stone-600 text-xs sm:text-sm font-bold shadow-sm transition flex items-center justify-center gap-2 cursor-pointer';
             return;
         }
 
@@ -393,6 +393,7 @@
         itemsListEl.classList.remove('hidden');
         btnResetCartEl.classList.remove('hidden');
         btnSubmitEl.disabled = false;
+        btnSubmitEl.className = 'w-full py-3 px-4 rounded-xl bg-emerald-700 hover:bg-emerald-600 text-white text-xs sm:text-sm font-bold shadow-md transition flex items-center justify-center gap-2 cursor-pointer';
 
         let inputIndex = 0;
 

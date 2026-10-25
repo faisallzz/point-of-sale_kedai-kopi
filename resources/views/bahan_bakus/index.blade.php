@@ -96,7 +96,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="px-5 py-8 text-center text-stone-400">Belum ada bahan baku tercatat.</td>
+                            <td colspan="7" class="px-5 py-8 text-center text-stone-400">Belum ada bahan baku tercatat.</td>
                         </tr>
                     @endforelse
                 </tbody>
